@@ -1,9 +1,6 @@
 suite: test common metadata across all templates
 templates:
-  - templates/deployment.yaml
-  - templates/service.yaml
-  - templates/configmap.yaml
-  - templates/secret.yaml
+  - templates/*.yaml
 tests:
   - it: should have standard labels on all templates
     asserts:
