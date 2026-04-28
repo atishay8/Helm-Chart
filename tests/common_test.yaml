@@ -1,0 +1,43 @@
+suite: test common metadata across all templates
+templates:
+  - templates/deployment.yaml
+  - templates/service.yaml
+  - templates/configmap.yaml
+  - templates/secret.yaml
+tests:
+  - it: should have standard labels on all templates
+    asserts:
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: test-chart
+      - equal:
+          path: metadata.labels["app.kubernetes.io/instance"]
+          value: RELEASE-NAME
+      - equal:
+          path: metadata.labels["app.kubernetes.io/version"]
+          value: "1.0.0"
+      - equal:
+          path: metadata.labels["app.kubernetes.io/managed-by"]
+          value: Helm
+      - equal:
+          path: metadata.labels["helm.sh/chart"]
+          value: test-chart-0.1.0
+
+  - it: should use nameOverride in resource names
+    set:
+      nameOverride: custom-name
+    asserts:
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-custom-name
+      - equal:
+          path: metadata.labels["app.kubernetes.io/name"]
+          value: custom-name
+
+  - it: should use fullnameOverride in resource names
+    set:
+      fullnameOverride: my-full-name
+    asserts:
+      - equal:
+          path: metadata.name
+          value: my-full-name

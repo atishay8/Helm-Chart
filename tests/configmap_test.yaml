@@ -1,0 +1,64 @@
+suite: test configmap
+templates:
+  - templates/configmap.yaml
+tests:
+  - it: should render exactly one document
+    asserts:
+      - hasDocuments:
+          count: 1
+
+  - it: should render a ConfigMap
+    asserts:
+      - isKind:
+          of: ConfigMap
+      - isAPIVersion:
+          of: v1
+
+  - it: should have correct default name
+    asserts:
+      - equal:
+          path: metadata.name
+          value: RELEASE-NAME-test-chart
+
+  - it: should have default APP_MODE set to production
+    asserts:
+      - equal:
+          path: data.APP_MODE
+          value: "production"
+
+  - it: should have default LOG_LEVEL set to info
+    asserts:
+      - equal:
+          path: data.LOG_LEVEL
+          value: "info"
+
+  - it: should override APP_MODE from values
+    set:
+      config:
+        appMode: development
+    asserts:
+      - equal:
+          path: data.APP_MODE
+          value: "development"
+
+  - it: should override LOG_LEVEL from values
+    set:
+      config:
+        logLevel: debug
+    asserts:
+      - equal:
+          path: data.LOG_LEVEL
+          value: "debug"
+
+  - it: should override both config values
+    set:
+      config:
+        appMode: staging
+        logLevel: warn
+    asserts:
+      - equal:
+          path: data.APP_MODE
+          value: "staging"
+      - equal:
+          path: data.LOG_LEVEL
+          value: "warn"
